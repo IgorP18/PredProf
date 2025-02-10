@@ -28,12 +28,9 @@ unsigned long ontime = 0;
 int pvr = 55;
 long duration, cm;
 
-//надо дописать получение этих переменных с raspberry//
-unsigned long true_password = 1231;                  //
-int auto_uid = 162;                                  //
-int guest_uid = 20;                                  //
-//---------------------------------------------------//
 
+unsigned long true_password = 1231;      
+            
 void setup() {
   Serial.begin(9600);
   lcd.init();
@@ -62,10 +59,10 @@ void loop() {
     fl_star = 1;
     fl_enter = 1;
     lcd.setCursor(0, 0);
-    if (uid == auto_uid) {
+    if (auto_uid == 0) {
       lcd.print("access allowed  ");
       gates();
-    } else if (uid == guest_uid) {
+    } else if (auto_uid == 1) {
       lcd.print("access denied   ");
     } else {
       lcd.print("The card has    ");
@@ -213,5 +210,20 @@ void getpassword() {
       count++;
       fl_star = 0;
     }
+  }
+}
+
+void Input() {
+  if (Serial.available() > 0) {  //если сериал порт доступен
+  String data = Serial.readStringUntil('\n'); //принятие данных до новой строки
+  if (data == "allow") {
+    auto_uid = 1;
+  }
+  if (data == "forbid") {
+    auto_uid = 0;
+  }
+  if (data == "expired") {
+    auto_uid = 2;
+  }
   }
 }
